@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:11
+    network_mode: host
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=store-monitoring-db
+  web: 
+    build: .
+    command: bash -c "python main.py"
+    volumes:
+      - .:/app
+    network_mode: host
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    network_mode: host
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@pgadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
